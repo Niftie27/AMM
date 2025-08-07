@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./Token.sol";
 
-// [] Manage Pool
-// [] Manage Deposits
-// [] Facilitate Swaps (i.e.)
-// [] Manage Withdraws
+// [X] Manage Pool
+// [X] Manage Deposits
+// [X] Facilitate Swaps (i.e.)
+// [X] Manage Withdraws
 
 contract AMM {
 	Token public token1; // datatype is SC, var type
@@ -198,8 +198,37 @@ contract AMM {
 			token2Balance,
 			token1Balance,
 			block.timestamp
+		);	
+	}
+
+	function calculateWithdrawAmount(uint _share) public view returns(uint256 token1Amount, uint256 token2Amount) {
+		require(_share <= totalShares, "must be less than total shares");
+		token1Amount = (_share * token1Balance) / totalShares;
+		token2Amount = (_share * token2Balance) / totalShares;
+	}
+
+	// Removes liquidity from the pool
+	function removeLiquidity(uint256 _share) external returns(uint256 token1Amount, uint256 token2Amount) {
+		require(
+			_share <= shares[msg.sender],
+			"cannot withdraw more shares than you have"
 		);
-			
+
+		(token1Amount, token2Amount) = calculateWithdrawAmount(_share); // paralel assignment
+
+		shares[msg.sender] -= _share; 	// changes mapping
+		totalShares -= _share;			// changes state var
+
+		token1Balance -= token1Amount;		// changes balance
+		token2Balance -= token2Amount;		// changes balance
+		K = token1Balance * token2Balance;	// we need to change K for determining prices whenever swap 
+		// (K is not true constant, but it is a constant; traders don't change it, but liq. providers change it)
+
+		// transfer funds back to user
+		token1.transfer(msg.sender, token1Amount);
+		token2.transfer(msg.sender, token2Amount);
+
+
 	}
 
 }
