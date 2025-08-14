@@ -1,8 +1,12 @@
+import Blockies from 'react-blockies'
+import { useSelector } from 'react-redux'
 import Navbar from 'react-bootstrap/Navbar';
 
 import logo from '../logo.png';
 
-const Navigation = ({ account }) => {
+const Navigation = () => {
+  const account = useSelector(state => state.provider.account)
+
   return (
     <Navbar className='my-3'>
       <img
@@ -14,9 +18,13 @@ const Navigation = ({ account }) => {
       />
       <Navbar.Brand href="#">Dapp University Template</Navbar.Brand>
       <Navbar.Collapse className="justify-content-end">
+        {account ? (
         <Navbar.Text>
-          {account}
+          {account.slice(0, 5) + '...' + account.slice(38, 42)}
         </Navbar.Text>
+        ) : (
+          <></>
+        )}
       </Navbar.Collapse>
     </Navbar>
   );

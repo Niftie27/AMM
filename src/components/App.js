@@ -1,19 +1,23 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Container } from 'react-bootstrap'
+import { ethers } from 'ethers'
 
 // Components
 import Navigation from './Navigation';
+import Loading from './Loading';
 
 import {
   loadProvider,
   loadNetwork,
-  loadAccount
+  loadAccount,
+  loadTokens,
+  loadAMM
 } from '../store/interactions'
 
 // ABIs: Import your contract ABIs here
 // import TOKEN_ABI from '../abis/Token.json'
-
+// WE NO LONGER NEED ANY OF THIS
 // Config: Import your network config here
 // import config from '../config.json';
 
@@ -32,6 +36,10 @@ function App() {
 
     // Fetch accounts
     await loadAccount(dispatch)
+
+    // Initiate contracts
+    await loadTokens(provider, chainId, dispatch)
+    await loadAMM(provider, chainId, dispatch)
   }
 
   useEffect(() => {
@@ -40,7 +48,7 @@ function App() {
 
   return(
     <Container>
-      <Navigation account={'0x0...'} />
+      <Navigation />
 
       <h1 className='my-4 text-center'>React Hardhat Template</h1>
 
