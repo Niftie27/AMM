@@ -35,11 +35,11 @@ const Navigation = () => {
       <img
         alt="logo"
         src={logo}
-        width="40"
-        height="40"
-        className="d-inline-block align-top mx-3"
+        width="70"
+        height="70"
+        className="d-inline-block align-top mx-1"
       />
-      <Navbar.Brand href="#">Tangle AMM</Navbar.Brand>
+      <Navbar.Brand href="#">Entangle AMM</Navbar.Brand>
       <Navbar.Toggle aria-controls="nav" />
       <Navbar.Collapse id="nav" className="justify-content-end">
 
@@ -73,8 +73,6 @@ const Navigation = () => {
             <Button onClick={connectHandler}>Connect</Button>
           )}
         </div>
-
-        
 
       </Navbar.Collapse>
     </Navbar>
