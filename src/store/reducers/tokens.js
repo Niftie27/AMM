@@ -20,6 +20,10 @@ export const tokens = createSlice({
   }
 })
 
-export const { setContracts, setSymbols, balancesLoaded } = tokens.actions;
+export const {
+  setContracts,
+  setSymbols,
+  balancesLoaded
+} = tokens.actions;
 
 export default tokens.reducer;
