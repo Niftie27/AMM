@@ -12,7 +12,7 @@ import Alert from "./Alert";
 
 import {
   addLiquidity,
-  loadBalances,
+  loadBalances
 } from '../store/interactions'
 
 const Deposit = () => {
