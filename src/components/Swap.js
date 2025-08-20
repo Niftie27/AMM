@@ -14,12 +14,12 @@ import Alert from "./Alert";
 
 import {
   swap,
-  loadBalances
+  loadBalances,
 } from '../store/interactions'
 
 
 const Swap = () => {
-  const [inputToken, setInputToken] = useState(null)
+  const [inputToken, setInputToken] = useState(null)  // fetch from component state
   const [outputToken, setOutputToken] = useState(null)
   const [inputAmount, setInputAmount] = useState(0)
   const [outputAmount, setOutputAmount] = useState(0)
@@ -55,6 +55,10 @@ const Swap = () => {
     if (inputToken === 'DAPP') {
       setInputAmount(e.target.value)
 
+      // Fetch value from chain (similar in Deposit.js), reference in AMM.sol functions
+      // pass e.target.value as _token1Amount
+      // pass _token1Amount to amm.calculateToken1Swap
+      // result passed as _token2Amount and is set
       const _token1Amount = ethers.utils.parseUnits(e.target.value, 'ether')
       const result = await amm.calculateToken1Swap(_token1Amount)
       const _token2Amount = ethers.utils.formatUnits(result.toString(), 'ether')
@@ -64,6 +68,7 @@ const Swap = () => {
     } else {
       setInputAmount(e.target.value)
 
+      // Fetch value from chain (similar in Deposit.js), reference with AMM.sol functions
       const _token2Amount = ethers.utils.parseUnits(e.target.value, 'ether')
       const result = await amm.calculateToken2Swap(_token2Amount)
       const _token1Amount = ethers.utils.formatUnits(result.toString(), 'ether')
@@ -207,7 +212,7 @@ const Swap = () => {
             className='d-flex justify-content-center align-items-center'
             style={{ height: '300px' }}
           >
-          <div>Please connect wallet</div>
+            Please connect wallet
           </p>
         )}
       </Card>

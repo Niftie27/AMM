@@ -15,9 +15,12 @@ import {
 import {
   setContract,
   sharesLoaded,
+  depositRequest,
+  depositSuccess,
+  depositFail,
   swapRequest,
   swapSuccess,
-  swapFail
+  swapFail,
 } from './reducers/amm'
 
 import TOKEN_ABI from '../abis/Token.json';
@@ -81,13 +84,44 @@ export const loadBalances = async (amm, tokens, account, dispatch) => {
 }
 
 // -----------------------------------------------------------
-// SWAP
+// ADD LIQUIDITY (Amount is calculated in Deposit.js, Approve and Deposit happens here)
+
+export const addLiquidity = async (provider, amm, tokens, amounts, dispatch) => {
+  try {
+    // Tell Redux that the user is depositing
+    dispatch(depositRequest())
+    // This is approval transaction
+    
+    const signer = await provider.getSigner()
+    
+    let transaction
+
+    transaction = await tokens[0].connect(signer).approve(amm.address, amounts[0])// transferFrom approves AMM to spend
+    await transaction.wait()
+
+    transaction = await tokens[1].connect(signer).approve(amm.address, amounts[1])// transferFrom approves AMM to spend
+    await transaction.wait()
+
+    // Now we call addLiquidity (from AMM.sol)
+    transaction = await amm.connect(signer).addLiquidity(amounts[0], amounts[1])
+    await transaction.wait()
+
+    dispatch(depositSuccess(transaction.hash))
+
+  } catch (error) {
+    dispatch(depositFail())
+  }
+}
+
+// -----------------------------------------------------------
+// SWAP (Amount is calculated in Swap.js, Approve and Swap happens here)
 
 export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
   try {
     // Tell Redux that the user is swapping...
     dispatch(swapRequest())
 
+    // This is approval transaction
     let transaction
 
     const signer = await provider.getSigner()
