@@ -15,6 +15,7 @@ import {
 import {
   setContract,
   sharesLoaded,
+  swapsLoaded,
   depositRequest,
   depositSuccess,
   depositFail,
@@ -117,7 +118,7 @@ export const addLiquidity = async (provider, amm, tokens, amounts, dispatch) => 
 }
 
 // -----------------------------------------------------------
-// REMOVE LIQUIDITY (Amount is calculated in Withdraw.js, Approve and Withdraw happens here)
+// REMOVE LIQUIDITY (in Withdraw.js, Withdraw happens here)
 export const removeLiquidity = async (provider, amm, shares, dispatch) => {
   try {
     dispatch(withdrawRequest())
@@ -165,4 +166,23 @@ export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
 
     dispatch(swapFail())
   }
+}
+
+// -----------------------------------------------------------
+// LOAD ALL SWAPS (in Charts.js)
+
+export const loadAllSwaps = async (provider, amm, dispatch) => {
+
+  // Fetch swaps from Blockchain
+
+  const block = await provider.getBlockNumber() // we get block like this
+
+  // This finds all block from 0 to the latest, 0 is block that contract got deployed
+  const swapStream = await amm.queryFilter('Swap', 0, block)
+  const swaps = swapStream.map(event => {
+    return { hash: event.transactionHash, args: event.args }
+  })
+  console.log(swaps)
+
+  dispatch(swapsLoaded(swaps))
 }
